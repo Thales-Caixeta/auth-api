@@ -1,20 +1,22 @@
 const express = require('express');
+const cors = require('cors');
 require('dotenv').config();
-const db = require('./config/db');
+
+const authRoutes = require('./routes/authRoutes.js');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.use(cors());
 app.use(express.json());
 
-app.get('/', async (req, res) => {
-  try {
-    const result = await db.query('SELECT NOW()');
-    res.json({ status: 'Conectado ao banco!', hora: result.rows[0].now });
-  } catch (error) {
-    res.status(500).json({ error: 'Erro ao conectar no banco' });
-  }
+// Teste simples de conexão
+app.get('/', (req, res) => {
+  res.send('API está online');
 });
+
+// Rotas de autenticação
+app.use('/auth', authRoutes);
 
 app.listen(PORT, () => {
   console.log(`🚀 Servidor rodando na porta ${PORT}`);
